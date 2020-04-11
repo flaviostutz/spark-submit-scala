@@ -1,0 +1,8 @@
+version: '3.3'
+
+services:
+
+  spark-submit-scala:
+    build: .
+    image: flaviostutz/spark-submit-scala
+
