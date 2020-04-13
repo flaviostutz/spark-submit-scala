@@ -28,9 +28,18 @@ RUN echo "$SCALA_VERSION $SBT_VERSION" && \
     update-ca-certificates && \
     scala -version && \
     scalac -version && \
-    curl -fsL https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz | tar xfz - -C /usr/local && \
+    curl -fL https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz | tar xfz - -C /usr/local && \
     $(mv /usr/local/sbt-launcher-packaging-$SBT_VERSION /usr/local/sbt || true) && \
     ln -s /usr/local/sbt/bin/* /usr/local/bin/ && \
     apk del curl && \
     sbt sbtVersion
+
+#warmup
+ADD /app /app
+WORKDIR /app
+RUN sbt assembly && \
+    rm -rf /app
+
+#make run fail if submit fails
+RUN sed -i -e 's|/bash|/bash -e|g' /submit.sh
 
